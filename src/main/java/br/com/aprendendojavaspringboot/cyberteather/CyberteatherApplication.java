@@ -3,10 +3,15 @@ package br.com.aprendendojavaspringboot.cyberteather;
 
 import br.com.aprendendojavaspringboot.cyberteather.service.ConsumoApi;
 import br.com.aprendendojavaspringboot.cyberteather.service.ConverteDados;
+import model.DadosEpisodios;
 import model.DadosSerie;
+import model.DadosTemporada;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @SpringBootApplication
 public class CyberteatherApplication implements CommandLineRunner {
@@ -23,6 +28,18 @@ public class CyberteatherApplication implements CommandLineRunner {
 		ConverteDados conversor = new ConverteDados();
 		DadosSerie dados = conversor(json, DadosSerie.class);
 		System.out.println(dados);
+		json = consumoApi.obterDados("https://www.omdbapi.com/?t=vikings&season=1&episode=1&apikey=a215246d");
+		DadosEpisodios dadosEpisodios = conversor.obterDados(json, DadosEpisodios.class);
+		System.out.println(dadosEpisodios);
+
+		List<DadosTemporada> temporadas = new ArrayList<>();
+
+		for (int i = 1; i< dados.totalTemporadas(); i++){
+			json = consumoApi.obterDados("https://www.omdbapi.com/?t=vikings&season=" + i +"&apikey=a215246d");
+			DadosTemporada dadosTemporada = conversor.obterDados(json, DadosTemporada.class);
+			temporadas.add(dadosTemporada);
+		}
+		temporadas.forEach(System.out::println);
 
 	}
 
